@@ -1,5 +1,10 @@
 package ee.taltech.inbankbackend.config;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+
 /**
  * Holds all necessary constants for the decision engine.
  */
@@ -11,4 +16,14 @@ public class DecisionEngineConstants {
     public static final Integer SEGMENT_1_CREDIT_MODIFIER = 100;
     public static final Integer SEGMENT_2_CREDIT_MODIFIER = 300;
     public static final Integer SEGMENT_3_CREDIT_MODIFIER = 1000;
+    public static final Map<String, Integer> EXPECTED_LIFETIMES;
+
+    static {
+        EXPECTED_LIFETIMES = Map.of(
+                "EE", 79,
+                "LV", 76,
+                "LT", 77
+        );
+    }
+
 }

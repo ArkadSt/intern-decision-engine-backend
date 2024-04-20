@@ -9,9 +9,15 @@ personal codes based on the last 4 digits. As of now this mechanism has to be di
 by inspecting the source code.
 
 The method DecisionEngine.calculateApprovedLoan catches the exceptions thrown by verifyInputs
-and proceeds with returning a decision with an error message, which is bad and completely
-unnecessary provided that it is already specified that calculateApprovedLoan throws those
-exceptions which are later handled in the controller. That way the controller also fails to
-respond with "bad request". This seems to be the only such case and also the only case where
-the errorMessage field in the Decision class is assigned and used. Therefore, this field
-is redundant and should be removed.
+and proceeds with returning a decision with an error message, which is strange and bad for
+several reasons. First of all exceptions should be handled in controller, not service.
+Furthermore, the custom exceptions are in fact instances of class Throwable,
+not Exception, thus are not going to be handled in the catch block for instances of class
+Exception, therefore this try-catch block is redundant anyway. This also seems to be
+the only case when the errorMessage field in the Decision class is assigned and used.
+Therefore, this field is redundant and should be removed.
+
+Custom exceptions should be instances of Exception, not just Throwable, otherwise they are
+not regarded as exceptions.
+
+Some test methods have incorrect names

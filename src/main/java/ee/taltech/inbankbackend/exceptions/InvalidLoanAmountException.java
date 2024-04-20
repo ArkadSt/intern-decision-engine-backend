@@ -3,7 +3,7 @@ package ee.taltech.inbankbackend.exceptions;
 /**
  * Thrown when requested loan amount is invalid.
  */
-public class InvalidLoanAmountException extends Throwable {
+public class InvalidLoanAmountException extends Exception {
     private final String message;
     private final Throwable cause;
 

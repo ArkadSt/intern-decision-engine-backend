@@ -1,12 +1,14 @@
 package ee.taltech.inbankbackend.service;
 
+import com.github.vladislavgoltjajev.personalcode.exception.PersonalCodeException;
+import com.github.vladislavgoltjajev.personalcode.locale.estonia.EstonianPersonalCodeParser;
 import com.github.vladislavgoltjajev.personalcode.locale.estonia.EstonianPersonalCodeValidator;
 import ee.taltech.inbankbackend.config.DecisionEngineConstants;
-import ee.taltech.inbankbackend.exceptions.InvalidLoanAmountException;
-import ee.taltech.inbankbackend.exceptions.InvalidLoanPeriodException;
-import ee.taltech.inbankbackend.exceptions.InvalidPersonalCodeException;
-import ee.taltech.inbankbackend.exceptions.NoValidLoanException;
+import ee.taltech.inbankbackend.exceptions.*;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * A service class that provides a method for calculating an approved loan amount and period for a customer.
@@ -36,12 +38,20 @@ public class DecisionEngine {
      */
     public Decision calculateApprovedLoan(String personalCode, Long loanAmount, int loanPeriod)
             throws InvalidPersonalCodeException, InvalidLoanAmountException, InvalidLoanPeriodException,
-            NoValidLoanException {
+            NoValidLoanException, PersonalCodeException, InvalidAgeException {
 
         verifyInputs(personalCode, loanAmount, loanPeriod);
 
         int outputLoanAmount;
         int creditModifier = getCreditModifier(personalCode);
+
+        EstonianPersonalCodeParser estonianPersonalCodeParser = new EstonianPersonalCodeParser();
+        LocalDate dateOfBirth = estonianPersonalCodeParser.getDateOfBirth(personalCode);
+        Period age = estonianPersonalCodeParser.getAge(personalCode);
+
+        if (age.getYears() < 18 || isTooOld(dateOfBirth)){
+            throw new InvalidAgeException("Loan not approved due to age constraints.");
+        }
 
         if (creditModifier == 0) {
             throw new NoValidLoanException("No valid loan found!");
@@ -58,6 +68,15 @@ public class DecisionEngine {
         }
 
         return new Decision(outputLoanAmount, loanPeriod);
+    }
+
+    private boolean isTooOld(LocalDate dateOfBirth){
+        for (Integer lifetime: DecisionEngineConstants.EXPECTED_LIFETIMES.values()){
+            if (dateOfBirth.plusYears(lifetime).isAfter(LocalDate.now().plusMonths(DecisionEngineConstants.MAXIMUM_LOAN_PERIOD))){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
