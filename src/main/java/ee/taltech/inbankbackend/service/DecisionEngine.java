@@ -18,9 +18,6 @@ import java.time.Period;
 @Service
 public class DecisionEngine {
 
-    // Used to check for the validity of the presented ID code.
-    private final EstonianPersonalCodeValidator validator = new EstonianPersonalCodeValidator();
-
     /**
      * Calculates the maximum loan amount and period for the customer based on their ID code,
      * the requested loan amount and the loan period.
@@ -125,6 +122,9 @@ public class DecisionEngine {
      */
     private void verifyInputs(String personalCode, Long loanAmount, int loanPeriod)
             throws InvalidPersonalCodeException, InvalidLoanAmountException, InvalidLoanPeriodException {
+
+        // Used to check for the validity of the presented ID code.
+        EstonianPersonalCodeValidator validator = new EstonianPersonalCodeValidator();
 
         if (!validator.isValid(personalCode)) {
             throw new InvalidPersonalCodeException("Invalid personal ID code!");

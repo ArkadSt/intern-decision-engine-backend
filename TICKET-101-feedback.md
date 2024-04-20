@@ -4,6 +4,8 @@ Functionally, everything works correctly.
 
 No good reason for creditModifier to be a global variable.
 
+validator is only used in the verifyInputs method, no reason for it to be a global variable.
+
 What should have been documented is the way the program assigns the credit modifier to
 personal codes based on the last 4 digits. As of now this mechanism has to be discovered
 by inspecting the source code.
@@ -21,3 +23,7 @@ Custom exceptions should be instances of Exception, not just Throwable, otherwis
 not regarded as exceptions.
 
 Some test methods have incorrect names
+
+Decision class could be a record
+
+Tried to fix all of the above. 

@@ -45,8 +45,8 @@ public class DecisionEngineController {
         try {
             Decision decision = decisionEngine.
                     calculateApprovedLoan(request.getPersonalCode(), request.getLoanAmount(), request.getLoanPeriod());
-            response.setLoanAmount(decision.getLoanAmount());
-            response.setLoanPeriod(decision.getLoanPeriod());
+            response.setLoanAmount(decision.loanAmount());
+            response.setLoanPeriod(decision.loanPeriod());
             response.setErrorMessage(null);
 
             return ResponseEntity.ok(response);
