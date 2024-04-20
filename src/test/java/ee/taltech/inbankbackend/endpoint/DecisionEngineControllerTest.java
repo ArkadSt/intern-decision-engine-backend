@@ -217,14 +217,14 @@ public class DecisionEngineControllerTest {
     public void givenInvalidAge_whenRequestDecision_thenReturnsNotFound()
             throws Exception {
         when(decisionEngine.calculateApprovedLoan(anyString(), anyLong(), anyInt()))
-                .thenThrow(new NoValidLoanException("Loan not approved due to age constraints."));
+                .thenThrow(new InvalidAgeException("Loan not approved due to age constraints."));
 
         DecisionRequest request = new DecisionRequest("1234", 1000L, 12);
 
         MvcResult result = mockMvc.perform(post("/loan/decision")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isForbidden())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.loanAmount").isEmpty())
                 .andExpect(jsonPath("$.loanPeriod").isEmpty())

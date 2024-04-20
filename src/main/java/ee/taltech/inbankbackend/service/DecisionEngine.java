@@ -32,6 +32,8 @@ public class DecisionEngine {
      * @throws InvalidLoanAmountException If the requested loan amount is invalid
      * @throws InvalidLoanPeriodException If the requested loan period is invalid
      * @throws NoValidLoanException If there is no valid loan found for the given ID code, loan amount and loan period
+     * @throws InvalidAgeException If the person is underage or too old
+     * @throws PersonalCodeException If person's birthdate is in the future
      */
     public Decision calculateApprovedLoan(String personalCode, Long loanAmount, int loanPeriod)
             throws InvalidPersonalCodeException, InvalidLoanAmountException, InvalidLoanPeriodException,
@@ -67,6 +69,12 @@ public class DecisionEngine {
         return new Decision(outputLoanAmount, loanPeriod);
     }
 
+    /**
+     * Returns true if the person is older than the current expected lifetime
+     * of each respectable country minus our maximum loan period
+     * @param dateOfBirth date of birth
+     * @return true if too old, false otherwise
+     */
     private boolean isTooOld(LocalDate dateOfBirth){
         for (Integer lifetime: DecisionEngineConstants.EXPECTED_LIFETIMES.values()){
             if (dateOfBirth.plusYears(lifetime).isAfter(LocalDate.now().plusMonths(DecisionEngineConstants.MAXIMUM_LOAN_PERIOD))){

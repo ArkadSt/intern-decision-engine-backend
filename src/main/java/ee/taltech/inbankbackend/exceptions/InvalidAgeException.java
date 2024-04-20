@@ -1,5 +1,8 @@
 package ee.taltech.inbankbackend.exceptions;
 
+/**
+ * Thrown when person is underage or overage
+ */
 public class InvalidAgeException extends Exception{
     private final String message;
     private final Throwable cause;

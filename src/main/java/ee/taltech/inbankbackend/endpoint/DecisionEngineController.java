@@ -33,8 +33,10 @@ public class DecisionEngineController {
      * requested loan amount, and loan period.<br><br>
      * - If the loan amount or period is invalid, the endpoint returns a bad request response with an error message.<br>
      * - If the personal ID code is invalid, the endpoint returns a bad request response with an error message.<br>
+     * - If the person's birthdate is in the future, the endpoint returns a bad request response with an error message.
      * - If an unexpected error occurs, the endpoint returns an internal server error response with an error message.<br>
      * - If no valid loans can be found, the endpoint returns a not found response with an error message.<br>
+     * - If a person is underage or overage, the endpoint returns a forbidden response with an error message.<br>
      * - If a valid loan is found, a DecisionResponse is returned containing the approved loan amount and period.
      *
      * @param request The request body containing the customer's personal ID code, requested loan amount, and loan period
@@ -56,12 +58,18 @@ public class DecisionEngineController {
             response.setErrorMessage(e.getMessage());
 
             return ResponseEntity.badRequest().body(response);
-        } catch (NoValidLoanException | InvalidAgeException e) {
+        } catch (NoValidLoanException e) {
             response.setLoanAmount(null);
             response.setLoanPeriod(null);
             response.setErrorMessage(e.getMessage());
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }catch (InvalidAgeException e){
+            response.setLoanAmount(null);
+            response.setLoanPeriod(null);
+            response.setErrorMessage(e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         } catch (Exception e) {
             response.setLoanAmount(null);
             response.setLoanPeriod(null);
