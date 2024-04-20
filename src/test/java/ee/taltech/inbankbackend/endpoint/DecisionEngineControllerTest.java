@@ -56,7 +56,7 @@ public class DecisionEngineControllerTest {
     public void givenValidRequest_whenRequestDecision_thenReturnsExpectedResponse()
             throws Exception, InvalidLoanPeriodException, NoValidLoanException, InvalidPersonalCodeException,
             InvalidLoanAmountException {
-        Decision decision = new Decision(1000, 12, null);
+        Decision decision = new Decision(1000, 12);
         when(decisionEngine.calculateApprovedLoan(anyString(), anyLong(), anyInt())).thenReturn(decision);
 
         DecisionRequest request = new DecisionRequest("1234", 10L, 10);

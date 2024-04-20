@@ -49,7 +49,7 @@ public class DecisionEngineController {
                     calculateApprovedLoan(request.getPersonalCode(), request.getLoanAmount(), request.getLoanPeriod());
             response.setLoanAmount(decision.getLoanAmount());
             response.setLoanPeriod(decision.getLoanPeriod());
-            response.setErrorMessage(decision.getErrorMessage());
+            response.setErrorMessage(null);
 
             return ResponseEntity.ok(response);
         } catch (InvalidPersonalCodeException | InvalidLoanAmountException | InvalidLoanPeriodException e) {

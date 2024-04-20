@@ -18,7 +18,6 @@ public class DecisionEngine {
 
     // Used to check for the validity of the presented ID code.
     private final EstonianPersonalCodeValidator validator = new EstonianPersonalCodeValidator();
-    private int creditModifier = 0;
 
     /**
      * Calculates the maximum loan amount and period for the customer based on their ID code,
@@ -38,30 +37,27 @@ public class DecisionEngine {
     public Decision calculateApprovedLoan(String personalCode, Long loanAmount, int loanPeriod)
             throws InvalidPersonalCodeException, InvalidLoanAmountException, InvalidLoanPeriodException,
             NoValidLoanException {
-        try {
-            verifyInputs(personalCode, loanAmount, loanPeriod);
-        } catch (Exception e) {
-            return new Decision(null, null, e.getMessage());
-        }
+
+        verifyInputs(personalCode, loanAmount, loanPeriod);
 
         int outputLoanAmount;
-        creditModifier = getCreditModifier(personalCode);
+        int creditModifier = getCreditModifier(personalCode);
 
         if (creditModifier == 0) {
             throw new NoValidLoanException("No valid loan found!");
         }
 
-        while (highestValidLoanAmount(loanPeriod) < DecisionEngineConstants.MINIMUM_LOAN_AMOUNT) {
+        while (highestValidLoanAmount(loanPeriod, creditModifier) < DecisionEngineConstants.MINIMUM_LOAN_AMOUNT) {
             loanPeriod++;
         }
 
         if (loanPeriod <= DecisionEngineConstants.MAXIMUM_LOAN_PERIOD) {
-            outputLoanAmount = Math.min(DecisionEngineConstants.MAXIMUM_LOAN_AMOUNT, highestValidLoanAmount(loanPeriod));
+            outputLoanAmount = Math.min(DecisionEngineConstants.MAXIMUM_LOAN_AMOUNT, highestValidLoanAmount(loanPeriod, creditModifier));
         } else {
             throw new NoValidLoanException("No valid loan found!");
         }
 
-        return new Decision(outputLoanAmount, loanPeriod, null);
+        return new Decision(outputLoanAmount, loanPeriod);
     }
 
     /**
@@ -69,7 +65,7 @@ public class DecisionEngine {
      *
      * @return Largest valid loan amount
      */
-    private int highestValidLoanAmount(int loanPeriod) {
+    private int highestValidLoanAmount(int loanPeriod, int creditModifier) {
         return creditModifier * loanPeriod;
     }
 
